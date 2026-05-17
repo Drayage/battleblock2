@@ -7,7 +7,18 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="app">
+  <section id="menu" class="panel">
+    <h2>Battle Block Star</h2>
+    <label>AI 난이도: 
+      <select id="aiSel">
+        <option value="balanced">균형형</option>
+        <option value="fast">속사형</option>
+        <option value="tetris">뚝심형</option>
+      </select>
+    </label>
+    <button id="startBtn">게임 시작</button>
+  </section>
+  <main class="app" id="gameArea" style="display:none">
     <section class="hud">
       <h1>Tetris Roguelike Battle MVP+</h1>
       <div class="stats">

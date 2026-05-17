@@ -15,6 +15,9 @@ const state = {
   enemy: { board: [], hp: 20, bag: [], next: null, active: null, dropTimer: 0, dropSpeed: 600, lastDamage: 0 },
   dropTimer: 0, dropSpeed: 500, running: true, pausedForPanel: false, lastDamage: 0,
   hasHighPowerRelic: false, hasSpecialPiece: false,
+  aiMode: 'balanced',
+  keys: new Set(),
+  keyRepeat: {},
 };
 
 const boardCv = document.getElementById('board');
@@ -152,7 +155,9 @@ function expandBoard(rows){
 function startBattle(type){
   state.enemyType = type;
   state.enemyHp = enemyHpByRound(state.round, type);
-  state.enemy.dropSpeed = type==='elite' ? 420 : 620;
+  const mode = state.aiMode;
+  const base = mode==='fast' ? 500 : mode==='tetris' ? 700 : 620;
+  state.enemy.dropSpeed = type==='elite' ? Math.max(320, base-140) : base;
   message(`라운드 ${state.round} 시작 (${type}) - 1vs1 테트리스`);
 }
 
@@ -176,9 +181,19 @@ function enemyChooseX(piece){
     if(collidesOn(state.enemy.board,piece,x,y,piece.shape)) continue;
     let score=0;
     piece.shape.forEach((row,py)=>row.forEach((v,px)=>{ if(v){ const by=y-py; score += by; }}));
+    // mode-aware heuristic (borrowed from old prototype idea)
+    if (state.aiMode==='tetris') score -= clearPotentialAt(state.enemy.board, piece, x, y)*8;
+    if (state.aiMode==='fast') score += Math.random()*3;
     if(score<bestScore){ bestScore=score; bestX=x; }
   }
   return bestX;
+}
+
+
+function clearPotentialAt(board, piece, x, y){
+  const clone = board.map(r=>r.slice());
+  piece.shape.forEach((row,py)=>row.forEach((v,px)=>{ if(v){ const by=y-py; if(by>=0&&by<H) clone[by][x+px]=1; }}));
+  let c=0; for(let yy=0;yy<H;yy++) if(clone[yy].every(Boolean)) c++; return c;
 }
 
 function stepEnemy(dt){
@@ -195,8 +210,12 @@ function stepEnemy(dt){
   }
 }
 
+function dasDelay(n){ return n<2?180:n<5?120:n<10?70:45; }
 document.addEventListener('keydown',(e)=>{
   if(!state.running||state.pausedForPanel) return;
+  if(state.keys.has(e.code)) return;
+  state.keys.add(e.code);
+  state.keyRepeat[e.code]={next:performance.now()+200,count:0};
   if(e.key==='ArrowLeft') move(-1);
   if(e.key==='ArrowRight') move(1);
   if(e.key==='ArrowDown') softDrop();
@@ -206,6 +225,7 @@ document.addEventListener('keydown',(e)=>{
   if(e.key==='1') castCompress();
   if(e.key==='2') castPurify();
 });
+document.addEventListener('keyup',(e)=>{ state.keys.delete(e.code); delete state.keyRepeat[e.code]; });
 document.getElementById('skillCompress').onclick=castCompress;
 document.getElementById('skillPurify').onclick=castPurify;
 document.getElementById('btnLeft').onclick=()=>move(-1);
@@ -241,6 +261,14 @@ function render(){
 
 let last=0;
 function loop(ts){
+  const now=performance.now();
+  for (const code of state.keys){
+    const r=state.keyRepeat[code]; if(!r||now<r.next) continue;
+    r.next=now+dasDelay(r.count); r.count++;
+    if(code==='ArrowLeft') move(-1);
+    if(code==='ArrowRight') move(1);
+    if(code==='ArrowDown') softDrop();
+  }
   const dt=ts-last; last=ts;
   if(state.running && !state.pausedForPanel){
     state.dropTimer+=dt;
@@ -256,6 +284,11 @@ spawn(); spawnEnemy();
 if(state.enemy.active) state.enemy.targetX = enemyChooseX(state.enemy.active);
 const _spawnEnemyOriginal = spawnEnemy;
 spawnEnemy = function(){ _spawnEnemyOriginal(); if(state.enemy.active) state.enemy.targetX = enemyChooseX(state.enemy.active); };
-showEnemyChoice();
+document.getElementById('startBtn').onclick = () => {
+  state.aiMode = document.getElementById('aiSel').value;
+  document.getElementById('menu').style.display='none';
+  document.getElementById('gameArea').style.display='flex';
+  showEnemyChoice();
+  message('게임 시작!');
+};
 requestAnimationFrame(loop);
-message('게임 시작!');

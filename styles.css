@@ -17,3 +17,7 @@ canvas { background: #11162d; border: 1px solid #3c4a87; }
 @media (max-width: 880px) { .app { flex-direction: column; } }
 
 #enemyBoard { grid-column: span 2; }
+
+#menu { max-width: 460px; margin: 20px auto; }
+#menu select { margin: 8px 0; width: 100%; background:#0f1630; color:#e8ecff; border:1px solid #3c4a87; padding:8px; }
+#menu button { width:100%; margin-top:8px; }
