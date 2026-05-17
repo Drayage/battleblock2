@@ -1,10 +1,21 @@
 body { margin: 0; font-family: system-ui, sans-serif; background: #0f1220; color: #e8ecff; }
-.app { display: flex; gap: 24px; padding: 20px; align-items: flex-start; }
-.hud { max-width: 420px; }
-.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 12px 0; }
+.app { display: flex; gap: 20px; padding: 16px; align-items: flex-start; }
+.hud { max-width: 460px; }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0; }
 .controls { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
 button { background: #20284a; color: #fff; border: 1px solid #3c4a87; padding: 8px 10px; border-radius: 8px; cursor: pointer; }
+button:disabled { opacity: 0.45; cursor: not-allowed; }
 canvas { background: #11162d; border: 1px solid #3c4a87; }
 .board-wrap { display: grid; grid-template-columns: auto auto; gap: 12px; }
 #board { grid-row: span 2; }
 #message { min-height: 2em; color: #ffd17a; }
+.panel { border: 1px solid #3c4a87; border-radius: 8px; padding: 10px; background: #171d36; margin-bottom: 10px; }
+.panel h3 { margin: 0 0 8px; }
+.panel .row { display: flex; gap: 8px; flex-wrap: wrap; }
+.hidden { display: none; }
+.mobile-controls .row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+#enemyBoard { grid-column: span 2; }
+.menu { max-width: 460px; margin: 20px auto; }
+.menu select { margin: 8px 0; width: 100%; background:#0f1630; color:#e8ecff; border:1px solid #3c4a87; padding:8px; }
+.menu button { width:100%; margin-top:8px; }
+@media (max-width: 880px) { .app { flex-direction: column; } }
