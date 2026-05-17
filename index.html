@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tetris Roguelike Battle MVP</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="hud">
+      <h1>Tetris Roguelike Battle MVP</h1>
+      <div class="stats">
+        <div>Round: <span id="round">1</span>/20</div>
+        <div>Enemy HP: <span id="enemyHp">0</span></div>
+        <div>MP: <span id="mp">0</span>/<span id="mpMax">100</span></div>
+        <div>Gold: <span id="gold">0</span></div>
+        <div>Damage this clear: <span id="lastDamage">0.0</span></div>
+      </div>
+      <div class="controls">
+        <button id="skillCompress">스킬1: 긴급 하강 (MP 30)</button>
+        <button id="skillPurify">스킬2: 정화 3줄 (MP 60)</button>
+      </div>
+      <p>조작: ← → 이동 / ↑ 회전 / ↓ 소프트드롭 / Space 하드드롭 / C 홀드 / 1,2 스킬</p>
+      <p id="message"></p>
+    </section>
+    <section class="board-wrap">
+      <canvas id="board" width="300" height="600"></canvas>
+      <canvas id="next" width="120" height="120"></canvas>
+      <canvas id="hold" width="120" height="120"></canvas>
+    </section>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
